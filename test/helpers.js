@@ -1,4 +1,4 @@
-const { page } = require('../test-utils/testHmr')
+const { page } = require('test-hmr')
 
 const input = 'input'
 const button = 'button'

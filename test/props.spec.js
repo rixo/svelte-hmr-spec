@@ -1,4 +1,4 @@
-const { testHmr } = require('../test-utils/testHmr')
+const { testHmr } = require('test-hmr')
 
 describe('HMR: props', () => {
   testHmr`

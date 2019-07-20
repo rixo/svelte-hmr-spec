@@ -4,9 +4,9 @@
   "description": "Test suite for svelte HMR",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/bootstrap.js 'test/**/*.spec.js'",
+    "test": "mocha --require test-hmr test",
     "test:watch": "WATCH=1 npm run test -- --watch",
-    "test:debug": "mocha debug test/bootstrap.js 'test/**/*.spec.js'"
+    "test:debug": "mocha debug --require test-hmr test"
   },
   "author": "rixo <rixo@rixo.fr>",
   "license": "MIT",

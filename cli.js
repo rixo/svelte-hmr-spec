@@ -15,14 +15,92 @@ const makeAbsolute = (name, basePath) =>
 
 const abs = name => path.join(__dirname, name)
 
-const resolveAppPath = (arg, cwd) => {
+const resolveAppPath = (arg, cwd, noDefault) => {
   if (!arg) {
-    return cwd
+    return noDefault ? null : cwd
   }
   if (path.isAbsolute(arg)) {
     return arg
   }
   return makeAbsolute(arg, cwd)
+}
+
+const parseArgs = (argv, defaultOptions) => {
+  const options = {
+    watch: false,
+    watchDirs: [],
+    ...defaultOptions,
+    set 'watchDirs.push'(value) {
+      options.watchDirs.push(value)
+    },
+  }
+
+  let help = false
+  let setKey = null
+  let maybeSetKey = null
+  const positionals = argv.slice(2).filter(arg => {
+    if (setKey) {
+      options[setKey] = arg
+      setKey = maybeSetKey = null
+    } else if (arg === '--help' || arg === '-h') {
+      help = true
+    } else if (arg === '--watch' || arg === '-w') {
+      options.watch = true
+      maybeSetKey = 'watchDirs.push'
+    } else if (arg === '--watch-self') {
+      options.watch = true
+      options.watchSelf = true
+    } else if (arg === '--self') {
+      options.selfTest = true
+      options.watchSelf = true
+    } else if (arg === '--self-only') {
+      options.selfTest = true
+      options.watchSelf = true
+      options.selfTestOnly = true
+    } else if (arg === '--steps') {
+      options.detail = Math.max(options.detail || 0, 2)
+    } else if (arg === '--detail' || arg === '-d') {
+      // setKey = 'detail'
+      options.detail = Math.max(options.detail || 0, 1)
+    } else if (arg === '--min') {
+      options.detail = Math.min(options.detail || 0, 0)
+    } else if (maybeSetKey) {
+      options[maybeSetKey] = arg
+      maybeSetKey = null
+    } else {
+      return true
+    }
+  })
+
+  if (positionals.length > 0) {
+    options.app = positionals.shift()
+  }
+
+  if (help || positionals.length > 0) {
+    // eslint-disable-next-line no-console
+    console.log(
+      `Usage: svhs [APP_PATH=.] [--self|--self-only] [--watch [dir]] [--detail|--step]`
+    )
+    process.exit(help ? 0 : 255)
+  }
+
+  return options
+}
+
+const createWatchFilter = ({ watchExtensions, watchNodeModules }) => ({
+  path: name,
+  stats,
+}) => {
+  const excludeDirRegex = watchNodeModules
+    ? /(?:^|\/)(?:\.git)(?:\/|$)/
+    : /(?:^|\/)(?:node_modules|\.git)(?:\/|$)/
+  // case: directory
+  if (stats.isDirectory()) {
+    return !excludeDirRegex.test(name)
+  }
+  // case: file
+  const ext = path.extname(name)
+  return watchExtensions.includes(ext)
 }
 
 // Run mocha programmatically:
@@ -33,38 +111,31 @@ const runWithNode = async () => {
   let runAgain
   let runner
 
-  const parseArgs = argv => {
-    const options = { watch: false }
-    let setKey = null
-    const positionals = argv.slice(2).filter(arg => {
-      if (setKey) {
-        options[setKey] = arg
-      } else if (arg === '--watch' || arg === 'w') {
-        options.watch = true
-      } else if (arg === '--detail' || arg === 'd') {
-        setKey = 'detail'
-      } else if (arg === '--steps') {
-        options.detail = Math.max(options.detail || 0, 2)
-      } else if (arg === '--min') {
-        options.detail = Math.min(options.detail || 0, 0)
-      } else {
-        return true
-      }
-    })
-    if (positionals.length > 0) {
-      options.app = positionals.shift()
-    }
-    if (positionals.length > 0) {
-      // eslint-disable-next-line no-console
-      console.log(`Usage: svhs [--watch] [--steps|--min] [APP_PATH=.]`)
-      process.exit(255)
-    }
-    return options
+  const defaultOptions = {
+    detail: 0,
+    selfTest: false,
+    selfTestOnly: false,
+    watch: false,
+    watchDirs: [],
+    watchExtensions: ['.js', '.svelte'],
+    watchNodeModules: false,
+    watchSelf: false,
   }
 
-  const { watch, app: appArg, detail } = parseArgs(process.argv)
+  const options = parseArgs(process.argv, defaultOptions)
 
-  const appPath = await resolveAppPath(appArg, process.cwd())
+  const {
+    watch,
+    watchSelf,
+    app: appArg,
+    detail,
+    selfTest,
+    selfTestOnly,
+  } = options
+
+  // don't use default appPath with self only: if app path is provided, e2e
+  // self tests will be run, else marked as pending
+  const appPath = await resolveAppPath(appArg, process.cwd(), selfTestOnly)
 
   const run = async () => {
     if (mocha) {
@@ -81,8 +152,18 @@ const runWithNode = async () => {
 
     files.push(abs('test/bootstrap.js'))
 
-    const testFiles = await glob(abs('test/**/*.spec.js'))
-    files.push(...testFiles)
+    if (selfTest) {
+      const testHmrIndex = require.resolve('test-hmr')
+      const testHmrDir = path.dirname(testHmrIndex)
+      const selfTestDir = path.join(testHmrDir, 'test')
+      const selfTestFiles = await glob(`${selfTestDir}/**/*.spec.js`)
+      files.push(...selfTestFiles)
+    }
+
+    if (!selfTestOnly) {
+      const testFiles = await glob(abs('test/**/*.spec.js'))
+      files.push(...testFiles)
+    }
 
     files.forEach(file => {
       mocha.addFile(file)
@@ -102,8 +183,9 @@ const runWithNode = async () => {
   if (watch) {
     const CheapWatch = require('cheap-watch')
 
-    const rerun = () => {
-      runAgain = true
+    const apply = () => {
+      const files = getWatchedFiles()
+      files.forEach(Mocha.unloadFile)
       if (runner) {
         runner.abort()
       } else {
@@ -114,27 +196,76 @@ const runWithNode = async () => {
       }
     }
 
-    const watchDirs = [abs('test')]
+    let applyTimeout = null
 
-    if (appPath !== watchDirs[0]) {
-      watchDirs.push(appPath)
+    const schedule = () => {
+      clearTimeout(applyTimeout)
+      applyTimeout = setTimeout(apply, 20)
     }
 
-    await Promise.all(
-      watchDirs.map(async dir => {
-        const watch = new CheapWatch({ dir })
+    const rerun = () => {
+      runAgain = true
+      schedule()
+    }
+
+    const watchDirs = new Set()
+
+    if (watchSelf) {
+      let selfDir = path.dirname(require.resolve('test-hmr'))
+      selfDir = path.resolve(selfDir)
+      watchDirs.add(selfDir)
+    }
+
+    if (!selfTestOnly) {
+      watchDirs.add(abs('test'))
+      if (appPath) {
+        watchDirs.add(appPath)
+      }
+    }
+
+    if (options.watchDirs) {
+      options.watchDirs.forEach(dir => watchDirs.add(dir))
+    }
+
+    const getWatchedFiles = () => {
+      const files = new Set()
+      for (const watch of watches) {
+        const { dir } = watch
+        for (const [name, stat] of watch.paths) {
+          if (stat.isFile()) {
+            files.add(path.join(dir, name))
+          }
+        }
+      }
+      return [...files]
+    }
+
+    const filter = createWatchFilter(options)
+
+    const watches = await Promise.all(
+      [...watchDirs].map(async dir => {
+        // eslint-disable-next-line no-console
+        console.info('Watching dir', dir)
+
+        const watch = new CheapWatch({
+          dir,
+          filter,
+        })
 
         await watch.init()
 
         watch.on('+', rerun)
         watch.on('-', rerun)
+
+        return watch
       })
     )
   }
 
   config.set({
     appPath: appPath,
-    keepRunning: true,
+    e2e: appPath ? true : 'skip',
+    keepRunning: !!watch,
     detail,
   })
 
@@ -157,6 +288,7 @@ const resolveAppArg = argv => {
   }
 }
 
+// TODO this is more & more legacy... it should be ready to leave us soon
 async function runWithCli() {
   const files = await glob(abs('test/**/*.spec.js'))
   const { app, rest } = resolveAppArg(process.argv)

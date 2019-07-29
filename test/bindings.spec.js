@@ -1,8 +1,16 @@
+const { cons } = require('test-hmr/commands')
 const { clickButton, replaceInputValue } = require('./helpers')
 
 describe('bindings', () => {
+  // FIXME
+  testHmr.skip('preserves bound values when child changes')
+
   testHmr`
-    # preserves bound values when child changes
+    # preserves bound values when child changes (ignore dev warnings)
+
+    ${function*() {
+      yield cons.ignoreWarnings(/\bwas created with unknown prop\b/)
+    }}
 
     --- App.svelte ---
 
@@ -25,16 +33,33 @@ describe('bindings', () => {
     <button on:click={onClick}>+</button>
 
     ::0
-    ::1 reloaded
+    ::1 reloaded =>
+    ::2 rere .
 
-    * * *
+    * * * * * * * * * * * * * * * *
 
     <button>+</button>
 
-    ::0::
-      0 ${clickButton()} 1
-    ::1::
-      reloaded 1
+    ::0:: load
+
+      0
+      ${clickButton()}
+      1
+      ${clickButton()}
+      2
+
+    ::1:: child changes
+
+      reloaded => 2
+      ${clickButton()}
+      reloaded => 3
+
+    ::2:: child changes again
+
+      rere . 3
+      ${clickButton()}
+      rere . 4
+
   `
 
   // I'm not entirely sure this is the optimal behaviour but, since the

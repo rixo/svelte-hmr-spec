@@ -66,6 +66,9 @@ Options:
   --console     Display browser's console messages in the terminal
   --webpack     Display webpack's output in the terminal
   --default     Use default app in the svelte-hmr-spec project
+  --min         Display one mocha test (it) result per testHmr test (default)
+  --detail      Display one test (it) result per HMR update
+  --steps       Display one test (it) result per HMR update sub step
   --self        Runs test utils self tests instead of HMR tests
   --sanity      Runs test utils self tests in addition to app tests
   --watch-self  Watch test utils directory (even if not running self tests)

@@ -52,6 +52,9 @@ target is --self, then only the test utils directory will be watched.
 
 If an <app> is provided with the --self option, then self e2e tests will also be
 run (but HMR tests still won't be run).
+
+Debug the tests:
+  node --inspect-brk $(which svhs) [options] <app>
 `
 
 const helpMessage = ({ full = true }) => `
@@ -150,6 +153,14 @@ const parseArgs = (argv, defaultOptions) => {
       console.log('ERROR:', error, '\n')
     }
     process.exit(error ? 255 : 0)
+  }
+
+  if (options.open && options.watch) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      "Don't use --watch with --open option, it's a mess. Watch will be ignored."
+    )
+    options.watch = false
   }
 
   return options

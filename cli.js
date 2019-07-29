@@ -10,6 +10,23 @@ const { config } = require('test-hmr')
 // 'node' or 'cli'
 const runMethod = 'node'
 
+const defaultOptions = {
+  detail: 0,
+  selfTest: false,
+  selfTestOnly: false,
+  watch: false,
+  watchDirs: [],
+  watchExtensions: ['.js', '.svelte'],
+  watchNodeModules: false,
+  watchSelf: false,
+  watchLoader: false,
+  // open puppeteer's browser for visual inspection
+  open: false,
+  // console: log browser's console output to terminal
+  console: false,
+  logWebpack: false,
+}
+
 const makeAbsolute = (name, basePath) =>
   path.isAbsolute(name) ? name : path.join(basePath, name)
 
@@ -24,6 +41,25 @@ const resolveAppPath = (arg, cwd, noDefault) => {
   }
   return makeAbsolute(arg, cwd)
 }
+
+const helpMessage = `
+Usage: svhs [options] <app>
+
+Options:
+  --watch       Wath app and tests dirs, and rerun tests on change
+  --open        Open puppeteer's browser for debug (with some slowmo)
+  --console     Display browser's console messages in the terminal
+  --webpack     Display webpack's output in the terminal
+  --self        Runs test utils self tests instead of HMR tests
+  --sanity      Runs test utils self tests in addition to app tests
+  --watch-self  Watch test utils directory (even if not running self tests)
+  --help, -h    Display this help message
+
+If no <app> is provided, then the current directory will be used.
+
+If an <app> is provided with the --self option, then self e2e tests will also be
+run (but HMR tests still won't be run).
+`
 
 const parseArgs = (argv, defaultOptions) => {
   const options = {
@@ -44,16 +80,27 @@ const parseArgs = (argv, defaultOptions) => {
       setKey = maybeSetKey = null
     } else if (arg === '--help' || arg === '-h') {
       help = true
-    } else if (arg === '--watch' || arg === '-w') {
+    } else if (arg === '--watch') {
+      options.watch = true
+    } else if (arg === '--open') {
+      options.open = true
+    } else if (arg === '--console') {
+      options.console = true
+    } else if (arg === '--webpack') {
+      options.logWebpack = true
+    } else if (arg === '--watch-dir' || arg === '-w') {
       options.watch = true
       maybeSetKey = 'watchDirs.push'
     } else if (arg === '--watch-self') {
       options.watch = true
       options.watchSelf = true
-    } else if (arg === '--self') {
+    } else if (arg === '--watch-loader') {
+      options.watch = true
+      options.watchLoader = true
+    } else if (arg === '--sanity') {
       options.selfTest = true
       options.watchSelf = true
-    } else if (arg === '--self-only') {
+    } else if (arg === '--self') {
       options.selfTest = true
       options.watchSelf = true
       options.selfTestOnly = true
@@ -78,9 +125,7 @@ const parseArgs = (argv, defaultOptions) => {
 
   if (help || positionals.length > 0) {
     // eslint-disable-next-line no-console
-    console.log(
-      `Usage: svhs [APP_PATH=.] [--self|--self-only] [--watch [dir]] [--detail|--step]`
-    )
+    console.log(helpMessage)
     process.exit(help ? 0 : 255)
   }
 
@@ -111,26 +156,17 @@ const runWithNode = async () => {
   let runAgain
   let runner
 
-  const defaultOptions = {
-    detail: 0,
-    selfTest: false,
-    selfTestOnly: false,
-    watch: false,
-    watchDirs: [],
-    watchExtensions: ['.js', '.svelte'],
-    watchNodeModules: false,
-    watchSelf: false,
-  }
-
   const options = parseArgs(process.argv, defaultOptions)
 
   const {
     watch,
     watchSelf,
+    watchLoader,
     app: appArg,
     detail,
     selfTest,
     selfTestOnly,
+    open,
   } = options
 
   // don't use default appPath with self only: if app path is provided, e2e
@@ -146,8 +182,8 @@ const runWithNode = async () => {
 
     mocha = new Mocha({
       reporter: 'mocha-unfunk-reporter',
-      timeout: 5000,
-      slow: 1000,
+      timeout: open ? Infinity : 5000,
+      slow: 1500,
     })
 
     files.push(abs('test/bootstrap.js'))
@@ -216,6 +252,15 @@ const runWithNode = async () => {
       watchDirs.add(selfDir)
     }
 
+    if (watchLoader) {
+      const loaderPath = path.resolve(`${appPath}/node_modules/svelte-loader`)
+      watchDirs.add(loaderPath)
+      const devHelperPath = path.resolve(
+        `${appPath}/node_modules/svelte-dev-helper`
+      )
+      watchDirs.add(devHelperPath)
+    }
+
     if (!selfTestOnly) {
       watchDirs.add(abs('test'))
       if (appPath) {
@@ -233,7 +278,7 @@ const runWithNode = async () => {
         const { dir } = watch
         for (const [name, stat] of watch.paths) {
           if (stat.isFile()) {
-            files.add(path.join(dir, name))
+            files.add(path.resolve(path.join(dir, name)))
           }
         }
       }
@@ -267,6 +312,9 @@ const runWithNode = async () => {
     e2e: appPath ? true : 'skip',
     keepRunning: !!watch,
     detail,
+    open,
+    console: options.console,
+    logWebpack: options.logWebpack,
   })
 
   return run()

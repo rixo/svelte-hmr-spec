@@ -57,7 +57,7 @@ The tests expect a basic svelte + webpack application with HMR enabled. They als
 
 This is actually the default structure of the [webpack template app][template-webpack] with some customization to allow for programmatic control of the webpack instance. In particular, the webpack dev server's config must be located in the `webpack.config.js` file (the `contentBase` option specifically).
 
-Look at the provided [default app] for a precise reference of what is expected. My [HMR demo app] should also be kept in sync to be usage as a test target (so you can start from that if you want to create a custom test target app).
+Look at the provided [default app] for a precise reference of what is expected. My [HMR demo app] should also be kept in sync to be usable as a test target (so you can start from that if you want to create a custom test target app).
 
 [default app]: https://github.com/rixo/svelte-hmr-spec/tree/master/app
 [hmr demo app]: https://github.com/rixo/demo-svelte3-hmr

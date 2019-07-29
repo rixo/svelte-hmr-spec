@@ -43,7 +43,18 @@ const resolveAppPath = (arg, cwd, noDefault) => {
   return makeAbsolute(arg, cwd)
 }
 
-const helpMessage = `
+const helpDescription = `
+If no <app> is provided, then the current directory will be used.
+
+The --watch option will adapt to the current test target. When the target is an
+app, both the app and tests directories will be placed under watch. When the
+target is --self, then only the test utils directory will be watched.
+
+If an <app> is provided with the --self option, then self e2e tests will also be
+run (but HMR tests still won't be run).
+`
+
+const helpMessage = ({ full = true }) => `
 Usage: svhs [options] <app>
 
 Options:
@@ -55,13 +66,8 @@ Options:
   --self        Runs test utils self tests instead of HMR tests
   --sanity      Runs test utils self tests in addition to app tests
   --watch-self  Watch test utils directory (even if not running self tests)
-  --help, -h    Display this help message
-
-If no <app> is provided, then the current directory will be used.
-
-If an <app> is provided with the --self option, then self e2e tests will also be
-run (but HMR tests still won't be run).
-`
+  --help, -h    Display ${full ? 'this' : 'full'} help message
+${full ? helpDescription : ''}`
 
 const parseArgs = (argv, defaultOptions) => {
   const options = {
@@ -138,7 +144,7 @@ const parseArgs = (argv, defaultOptions) => {
 
   if (help || error) {
     // eslint-disable-next-line no-console
-    console.log(helpMessage)
+    console.log(helpMessage({ full: help }))
     if (typeof error === 'string') {
       // eslint-disable-next-line no-console
       console.log('ERROR:', error, '\n')

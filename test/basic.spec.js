@@ -1,4 +1,4 @@
-const { init, templates, change, innerText } = testHmr
+const { init, templates, change, innerText } = require('test-hmr')
 
 describe('basic HMR', () => {
   testHmr('updates text content (twice)', function*() {
@@ -7,12 +7,12 @@ describe('basic HMR', () => {
     yield change({
       'App.svelte': '<h1>HMRd</h1>',
     })
-    expect(yield innerText('h1')).to.equal('HMRd')
+    expect(yield innerText('h1'), 'update 1').to.equal('HMRd')
 
     yield change({
       'App.svelte': '<h1>reHMRd</h1>',
     })
-    expect(yield innerText('h1')).to.equal('reHMRd')
+    expect(yield innerText('h1'), 'update 2').to.equal('reHMRd')
   })
 
   testHmr('updates child text when child changes', function*() {

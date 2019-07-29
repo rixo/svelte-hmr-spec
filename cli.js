@@ -12,6 +12,7 @@ const runMethod = 'node'
 
 const defaultOptions = {
   detail: 0,
+  defaultApp: false,
   selfTest: false,
   selfTestOnly: false,
   watch: false,
@@ -50,6 +51,7 @@ Options:
   --open        Open puppeteer's browser for debug (with some slowmo)
   --console     Display browser's console messages in the terminal
   --webpack     Display webpack's output in the terminal
+  --default     Use default app in the svelte-hmr-spec project
   --self        Runs test utils self tests instead of HMR tests
   --sanity      Runs test utils self tests in addition to app tests
   --watch-self  Watch test utils directory (even if not running self tests)
@@ -80,6 +82,8 @@ const parseArgs = (argv, defaultOptions) => {
       setKey = maybeSetKey = null
     } else if (arg === '--help' || arg === '-h') {
       help = true
+    } else if (arg === '--default') {
+      options.defaultApp = true
     } else if (arg === '--watch') {
       options.watch = true
     } else if (arg === '--open') {
@@ -119,14 +123,27 @@ const parseArgs = (argv, defaultOptions) => {
     }
   })
 
+  let error = false
+
   if (positionals.length > 0) {
     options.app = positionals.shift()
+    if (options.defaultApp) {
+      error = 'Only one of --default or <app> is allowed'
+    } else if (positionals.length > 0) {
+      error = 'Only one <app> path can be provided'
+    }
+  } else if (options.defaultApp) {
+    options.app = path.join(process.cwd(), 'app')
   }
 
-  if (help || positionals.length > 0) {
+  if (help || error) {
     // eslint-disable-next-line no-console
     console.log(helpMessage)
-    process.exit(help ? 0 : 255)
+    if (typeof error === 'string') {
+      // eslint-disable-next-line no-console
+      console.log('ERROR:', error, '\n')
+    }
+    process.exit(error ? 255 : 0)
   }
 
   return options

@@ -1,6 +1,6 @@
 const { testHmr } = require('test-hmr')
 
-describe('HMR: props', () => {
+describe('props', () => {
   testHmr`
     # preserves props value
 

@@ -1,6 +1,6 @@
 const { init, templates, change, innerText } = require('test-hmr')
 
-describe('basic HMR', () => {
+describe('basic', () => {
   testHmr('updates text content (twice)', function*() {
     expect(yield innerText('h1')).to.equal('Hello world!')
 

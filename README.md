@@ -1,91 +1,32 @@
-# Svelte HMR Test Suite
+# Svelte HMR Spec
 
 Test suite for Svelte 3 HMR.
 
+The whole project is only the tests. And a cool cli to run them on various targets.
+
 ## Install
 
-```bash
-npm install && cd app && npm install
-```
-
-## Quick start
-
-### Run HMR tests
+If just for running the tests, install globally:
 
 ```bash
-npm test
-npm run test
+npm install --global svelte-hmr-spec
 
-npm run test:watch
-
-npm run test:debug
+svhs --help
 ```
 
-### Self (test utils) tests
+If you plan to work on the tests or do something involved with them, clone the repository and install _that_ globally instead:
 
 ```bash
-npm run test:self
+git clone git@github.com:rixo/svelte-hmr-spec.git
 
-npm run test:self:watch
+npm install --global svelte-hmr-spec
 
-npm run test:self:debug
+svhs --help
 ```
 
-### All tests = HMR + self tests
+In order to use the default app that is provided with the project as a test target, you also need to install its dependencies:
 
 ```bash
-npm run test:all
-
-npm run test:all:watch
-
-npm run test:all:debug
+cd svelte-hmr-spec/app
+npm install
 ```
-
-### Play with demo app
-
-Launch dev server on `localhost:8080`:
-
-```bash
-cd app
-npm run dev
-```
-
-## Tests
-
-Default tests are those that target HMR proper (as "system under test").
-
-Tests utils are pretty involved and have their own test suite (under `test-utils/test`). Those are called "self tests".
-
-HMR tests spin a real webpack dev server and puppeteer, so they're definitely integration/e2e tests (and unfortunately, that comes with some latency).
-
-The self tests suite however is more oriented toward unit test level. For this reason, self tests that uses the browser are disabled when watching. Because they're more integration than unit, and they're slowing everything down, which can be annoying during dev of test utils.
-
-### Test detail level
-
-Use env variable `DETAIL` to control detail level of mocha reporting. This only works with the full spec `` testHmr`...` `` syntax (because there's no way to know the structure of the test in advance with the imperative syntax).
-
-Default is `1`.
-
-With `DETAIL=0`, each `testHmr` test uses a single `it`.
-
-With `DETAIL=1`, each HMR update uses a single `it`. The full test itself is wrapped in a `describe`.
-
-With `DETAIL=2`, each individual expectation step gets its own `it`.
-
-Example:
-
-```bash
-DETAILS=0 npm run test:watch
-```
-
-## Structure
-
-### `/app`
-
-The system under test: webpack + svelte + hmr
-
-### `/app/test-server`
-
-Test utils "insider". It will launch the actual webpack-dev-server that is used for testing. The dev server and webpack are quite sensitive to their root directory, so it's easier to have it under the app directory.
-
-### `/app/test` tests for the system under test

@@ -12,9 +12,9 @@ module.exports = {
     bundle: ['./src/main.js'],
   },
   resolve: {
-		alias: {
-			svelte: path.resolve('node_modules', 'svelte'),
-		},
+    alias: {
+      svelte: path.resolve(__dirname, 'node_modules', 'svelte'),
+    },
     extensions: ['.mjs', '.js', '.svelte'],
   },
   output: {

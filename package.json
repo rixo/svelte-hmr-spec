@@ -1,6 +1,6 @@
 {
   "name": "svelte-hmr-spec",
-  "version": "0.0.1-0",
+  "version": "0.0.1-1",
   "description": "Test suite for svelte HMR",
   "main": "index.js",
   "bin": {

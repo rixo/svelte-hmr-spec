@@ -18,7 +18,7 @@ module.exports = {
     extensions: ['.mjs', '.js', '.svelte'],
   },
   output: {
-    path: __dirname + '/public',
+    path: path.resolve(__dirname, 'public'),
     filename: '[name].js',
     chunkFilename: '[name].[id].js',
   },

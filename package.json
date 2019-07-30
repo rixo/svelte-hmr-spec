@@ -2,6 +2,15 @@
   "name": "svelte-hmr-spec",
   "version": "0.0.1-1",
   "description": "Test suite for svelte HMR",
+  "keywords": [
+    "test",
+    "svelte",
+    "sveltejs",
+    "hmr",
+    "webpack"
+  ],
+  "author": "rixo <rixo@rixo.fr>",
+  "license": "MIT",
   "main": "index.js",
   "bin": {
     "svhs": "./cli.js"
@@ -11,8 +20,6 @@
     "test:watch": "WATCH=1 npm run test -- --watch",
     "test:debug": "mocha debug --require test-hmr test"
   },
-  "author": "rixo <rixo@rixo.fr>",
-  "license": "MIT",
   "dependencies": {
     "cheap-watch": "^1.0.2",
     "fast-glob": "^3.0.4",

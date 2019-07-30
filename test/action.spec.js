@@ -40,7 +40,6 @@ describe('action', () => {
         return {
           destroy() {
             done('yay')
-            node.innerText = 'destroyed'
           }
         }
       }

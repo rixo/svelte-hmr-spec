@@ -145,7 +145,7 @@ const parseArgs = (argv, defaultOptions) => {
       error = 'Only one <app> path can be provided'
     }
   } else if (options.defaultApp) {
-    options.app = path.join(process.cwd(), 'app')
+    options.app = path.join(__dirname, 'app')
   }
 
   if (help || error) {

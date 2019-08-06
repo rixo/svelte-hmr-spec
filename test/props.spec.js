@@ -31,4 +31,32 @@ describe('props', () => {
       My name is foo
       My name is bar
   `
+
+  testHmr`
+    # doesn't trigger a warning when props are removed between updates
+
+    --- App.svelte ---
+
+    <script>
+      import Child from './Child'
+    </script>
+
+    <Child name="foo" />
+
+    --- Child.svelte ---
+
+    <script>
+      export let name
+      ::0 export let surname = 'bar'
+      ::1 // export let surname = 'bar'
+    </script>
+
+    ::0 I am {name} "{surname}"
+    ::1 I am {name}
+
+    * * *
+
+    ::0 I am foo "bar"
+    ::1 I am foo
+  `
 })

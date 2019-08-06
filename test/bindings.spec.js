@@ -1,16 +1,8 @@
-const { cons } = require('test-hmr/commands')
 const { clickButton, replaceInputValue } = require('./helpers')
 
 describe('bindings', () => {
-  // FIXME
-  testHmr.skip('preserves bound values when child changes')
-
   testHmr`
-    # preserves bound values when child changes (ignore dev warnings)
-
-    ${function*() {
-      yield cons.ignoreWarnings(/\bwas created with unknown prop\b/)
-    }}
+    # preserves bound values when child changes
 
     --- App.svelte ---
 

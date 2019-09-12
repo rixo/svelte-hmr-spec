@@ -4,6 +4,16 @@ Test suite for Svelte 3 HMR.
 
 The whole project is only the tests. And a cool cli to run them on various targets.
 
+## Quick Start
+
+~~~bash
+npm install --global svelte-hmr-spec
+
+svhs --default # run tests on default (bundled) app:
+
+svhs --help # learn more
+~~~
+
 ## Install
 
 If just for running the tests, install globally:
@@ -24,7 +34,7 @@ npm install --global svelte-hmr-spec
 svhs --help
 ```
 
-In order to use the default app that is provided with the project as a test target, you also need to install its dependencies:
+In order to use the default app (that is bundled with the project) as a test target, you also need to install its dependencies:
 
 ```bash
 cd svelte-hmr-spec/app

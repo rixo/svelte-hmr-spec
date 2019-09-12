@@ -1,6 +1,6 @@
 {
   "name": "svelte-hmr-spec",
-  "version": "0.0.1-1",
+  "version": "0.0.1-2",
   "description": "Test suite for svelte HMR",
   "keywords": [
     "test",

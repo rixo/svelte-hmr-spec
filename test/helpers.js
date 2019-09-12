@@ -3,8 +3,16 @@ const { page } = require('test-hmr')
 const input = 'input'
 const button = 'button'
 
+const fromEntries = entries => {
+  const o = {}
+  for (const [k, v] of entries) {
+    o[k] = v
+  }
+  return o
+}
+
 const curryAble = obj =>
-  Object.fromEntries(
+  fromEntries(
     Object.entries(obj).map(([name, fn]) => [
       name,
       (...args) =>

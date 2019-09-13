@@ -4,44 +4,26 @@ Test suite for Svelte 3 HMR.
 
 The whole project is only the tests. And a cool cli to run them on various targets.
 
-## Quick Start
-
-~~~bash
-npm install --global svelte-hmr-spec
-
-svhs --default # run tests on default (bundled) app:
-
-svhs --help # learn more
-~~~
-
 ## Install
-
-If just for running the tests, install globally:
-
-```bash
-npm install --global svelte-hmr-spec
-
-svhs --help
-```
-
-If you plan to work on the tests or do something involved with them, clone the repository and install _that_ globally instead:
 
 ```bash
 git clone git@github.com:rixo/svelte-hmr-spec.git
-
-npm install --global svelte-hmr-spec
-
-svhs --help
-```
-
-In order to use the default app (that is bundled with the project) as a test target, you also need to install its dependencies:
-
-```bash
-cd svelte-hmr-spec/app
+cd svelte-hmr-spec
+npm install
+npm install --global .
+cd app
 npm install
 ```
 
 ## Usage
+
+Quick start:
+
+~~~bash
+svhs --default # run tests on default (bundled) app
+
+svhs --help # learn more
+~~~
 
 See inline help for an up to date description of available cli options:
 

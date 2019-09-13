@@ -16,7 +16,6 @@
     "svhs": "./cli.js"
   },
   "scripts": {
-    "postinstall": "echo 'installing default app dependencies...' && cd app && npm install",
     "test": "mocha --require test-hmr test",
     "test:watch": "WATCH=1 npm run test -- --watch",
     "test:debug": "mocha debug --require test-hmr test"

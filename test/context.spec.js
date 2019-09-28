@@ -45,7 +45,6 @@ describe('context', () => {
 
     <script>
       import { getContext } from 'svelte'
-      debugger
       const name = getContext('name')
     </script>
 

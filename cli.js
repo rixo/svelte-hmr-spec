@@ -248,7 +248,10 @@ const runWithNode = async () => {
     runner = mocha.run(() => {
       runner = null
       if (runAgain) {
-        run()
+        run().catch(err => {
+          // eslint-disable-next-line no-console
+          console.error(err.stack)
+        })
       }
     })
   }

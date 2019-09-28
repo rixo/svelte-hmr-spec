@@ -2,6 +2,9 @@ const path = require('path')
 const { bootstrap, config } = require('test-hmr')
 
 const { appPath } = config
-process.env.SVELTE = path.resolve(appPath, 'node_modules', 'svelte')
+if (appPath) {
+  // TODO remove svelte dep
+  process.env.SVELTE = path.resolve(appPath, 'node_modules', 'svelte')
+}
 
 bootstrap()

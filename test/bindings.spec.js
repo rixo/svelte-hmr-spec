@@ -54,11 +54,8 @@ describe('bindings', () => {
 
   `
 
-  // I'm not entirely sure this is the optimal behaviour but, since the
-  // whole script content is going to be executed again on update, I think
-  // it is expected that local variables are reset (and I'm affraid doing
-  // otherwise might prove confusing). Not entirely sure, though...
-  testHmr`
+  // TODO should depend on preserveLocalState option
+  testHmr.skip`
     # resets bound values when owner is updated
 
     --- App.svelte ---

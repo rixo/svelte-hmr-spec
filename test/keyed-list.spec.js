@@ -1,29 +1,29 @@
-describe.skip('keyed lists', () => {
+const { clickButton } = require('./helpers')
+
+describe('keyed lists', () => {
   testHmr`
     # preserves position of reordered child items when child updates
 
     ---- App.svelte ----
 
     <script>
-      import { onMount } from 'svelte'
       import Child from './Child.svelte'
       let items = [
         {id: 1, text: 'foo'},
         {id: 2, text: 'bar'},
-        {id: 3, text: 'baz'},
       ]
-      onMount(() => {
-        items = [
-          {id: 3, text: 'baz'},
-          {id: 2, text: 'bar'},
-          {id: 1, text: 'foo'},
-        ]
-      })
+      const reverseItems = () => {
+        items = items.reverse()
+      }
     </script>
 
-    {#each items as item (item.id)}
-      <Child text={item.text} />
-    {/each}
+    <button on:click={reverseItems} />
+
+    <x-focus>
+      {#each items as item (item.id)}
+        <Child text={item.text} />
+      {/each}
+    </x-focus>
 
     ---- Child.svelte ----
 
@@ -31,12 +31,16 @@ describe.skip('keyed lists', () => {
       export let text
     </script>
 
-    ::0 <span>{text}</span>
-    ::1 <li>{text}</li>
+    ::0 -{text}-
+    ::1 ={text}=
 
     *****
 
-    ::0 <span>baz</span><span>bar</span><span>foo</span>
-    ::1 <li>baz</li><li>bar</li><li>foo</li>
+    ::0::
+      -foo--bar-
+      ${clickButton()}
+      -bar--foo-
+    ::1::
+      =bar==foo=
   `
 })

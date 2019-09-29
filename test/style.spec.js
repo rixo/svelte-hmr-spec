@@ -15,7 +15,7 @@ describe('style', () => {
         color: rgb(16, 25, 34);
         ::1::
         color: rgb(216, 225, 234);
-        :: ::
+        ::
       }
     </style>
 
@@ -70,7 +70,7 @@ describe('style', () => {
         color: rgb(16, 25, 34);
         ::1::
         color: rgb(216, 225, 234);
-        :: ::
+        ::
       }
     </style>
 

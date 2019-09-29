@@ -17,35 +17,31 @@ npm install
 
 ## Usage
 
-Quick start:
-
-~~~bash
-svhs --default # run tests on default (bundled) app
-
-svhs --help # learn more
-~~~
-
 See inline help for an up to date description of available cli options:
 
 ```bash
 svhs --help
 ```
 
-To run the tests on the default app (which should be last versions of svelte-loader, svelte, everything...):
+To run the tests on the default bundled app (which should be last versions of svelte-loader, svelte, everything...):
 
 ```bash
 svhs --default
 ```
 
-To run the tests on a custom target (for example to test a `svelte-loader` during development):
+To run the tests on a custom target, use `svhs ./path-to-your-app` (defaults to cwd). Example:
 
 ```bash
-svhs ./path-to-your-app --watch
+git clone https://github.com/rixo/demo-svelte-nollup
+cd demo-svelte-nollup
+npm install
+
+svhs --watch
 ```
 
 ### Test Apps
 
-The tests expect a basic svelte + webpack application with HMR enabled. They also expect the app to contain a `src/App.svelte` file, and a `src/main.js` file that bootstraps this App component on the document's body.
+The tests expect a basic svelte + webpack (or rollup / nollup) application with HMR enabled. They also expect the app to contain a `src/App.svelte` file, and a `src/main.js` file that bootstraps this App component on the document's body.
 
 This is actually the default structure of the [webpack template app][template-webpack] with some customization to allow for programmatic control of the webpack instance. In particular, the webpack dev server's config must be located in the `webpack.config.js` file (the `contentBase` option specifically).
 

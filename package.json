@@ -26,7 +26,7 @@
     "mocha": "^6.1.4",
     "mocha-unfunk-reporter": "^0.4.0",
     "node-fetch": "^2.6.0",
-    "test-hmr": "0.0.2"
+    "test-hmr": "^0.0.3"
   },
   "devDependencies": {
     "@rixo/eslint-config": "^0.7.0-alpha.7"

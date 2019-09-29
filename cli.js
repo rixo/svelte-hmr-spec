@@ -72,6 +72,7 @@ Options:
   --self        Runs test utils self tests instead of HMR tests
   --sanity      Runs test utils self tests in addition to app tests
   --watch-self  Watch test utils directory (even if not running self tests)
+  --user-dir    Used for Puppeteer userDataDir
   --help, -h    Display ${full ? 'this' : 'full'} help message
 ${full ? helpDescription : ''}`
 
@@ -127,6 +128,8 @@ const parseArgs = (argv, defaultOptions) => {
       options.detail = Math.max(options.detail || 0, 1)
     } else if (arg === '--min') {
       options.detail = Math.min(options.detail || 0, 0)
+    } else if (arg === '--user-data-dir') {
+      setKey = 'userDataDir'
     } else if (maybeSetKey) {
       options[maybeSetKey] = arg
       maybeSetKey = null
@@ -204,6 +207,8 @@ const runWithNode = async () => {
     selfTest,
     selfTestOnly,
     open,
+    userDataDir,
+    logWebpack,
   } = options
 
   // don't use default appPath with self only: if app path is provided, e2e
@@ -354,7 +359,8 @@ const runWithNode = async () => {
     detail,
     open,
     console: options.console,
-    logWebpack: options.logWebpack,
+    logWebpack,
+    userDataDir,
   })
 
   return run()

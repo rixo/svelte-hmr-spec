@@ -23,6 +23,7 @@ const defaultOptions = {
   watchLoader: false,
   // open puppeteer's browser for visual inspection
   open: false,
+  keepOpen: false,
   // console: log browser's console output to terminal
   console: false,
   logWebpack: false,
@@ -63,6 +64,7 @@ Usage: svhs [options] <app>
 Options:
   --watch       Wath app and tests dirs, and rerun tests on change
   --open        Open puppeteer's browser for debug (with some slowmo)
+  --keep        Keep the serves running after test run (useful for inspection)
   --console     Display browser's console messages in the terminal
   --webpack     Display webpack's output in the terminal
   --default     Use default app in the svelte-hmr-spec project
@@ -101,6 +103,8 @@ const parseArgs = (argv, defaultOptions) => {
       options.watch = true
     } else if (arg === '--open') {
       options.open = true
+    } else if (arg === '--keep') {
+      options.keepOpen = true
     } else if (arg === '--console') {
       options.console = true
     } else if (arg === '--webpack') {
@@ -207,6 +211,7 @@ const runWithNode = async () => {
     selfTest,
     selfTestOnly,
     open,
+    keepOpen,
     userDataDir,
     logWebpack,
   } = options
@@ -358,6 +363,7 @@ const runWithNode = async () => {
     keepRunning: !!watch,
     detail,
     open,
+    keepOpen,
     console: options.console,
     logWebpack,
     userDataDir,

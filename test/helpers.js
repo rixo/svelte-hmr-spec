@@ -1,4 +1,4 @@
-const { page } = require('test-hmr')
+const { page, cons } = require('test-hmr/commands')
 
 const input = 'input'
 const button = 'button'
@@ -40,8 +40,13 @@ function* replaceInputValue(value, selector = input) {
   yield page.type(selector, value)
 }
 
+function* waitConsole(...args) {
+  yield cons.wait(...args)
+}
+
 module.exports = curryAble({
   clickButton,
   clearInput,
   replaceInputValue,
+  waitConsole,
 })

@@ -24,6 +24,7 @@ const defaultOptions = {
   // open puppeteer's browser for visual inspection
   open: false,
   keepOpen: false,
+  break: false,
   // console: log browser's console output to terminal
   console: false,
   logWebpack: false,
@@ -105,6 +106,8 @@ const parseArgs = (argv, defaultOptions) => {
       options.open = true
     } else if (arg === '--keep') {
       options.keepOpen = true
+    } else if (arg === '--break') {
+      options.break = true
     } else if (arg === '--console') {
       options.console = true
     } else if (arg === '--webpack') {
@@ -212,6 +215,7 @@ const runWithNode = async () => {
     selfTestOnly,
     open,
     keepOpen,
+    break: breakAfter,
     userDataDir,
     logWebpack,
   } = options
@@ -364,6 +368,7 @@ const runWithNode = async () => {
     detail,
     open,
     keepOpen,
+    break: breakAfter,
     console: options.console,
     logWebpack,
     userDataDir,

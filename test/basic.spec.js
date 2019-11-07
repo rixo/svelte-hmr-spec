@@ -20,7 +20,7 @@ describe('basic', () => {
     yield templates({
       'App.svelte': slot => `
         <script>
-          import Child from './Child'
+          import Child from './Child.svelte'
         </script>
         ${slot}
       `,
@@ -59,7 +59,7 @@ describe('basic', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child name="foo" />
@@ -121,7 +121,7 @@ describe('basic', () => {
     ---- App.svelte ----
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     ::0::

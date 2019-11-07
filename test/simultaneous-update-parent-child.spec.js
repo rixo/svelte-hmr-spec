@@ -10,7 +10,7 @@ describe('simultaneous update parent & child', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
       import wrap from './a'
     </script>
 

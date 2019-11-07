@@ -6,7 +6,7 @@ describe('context', () => {
 
     <script>
       import { setContext } from 'svelte'
-      import Child from './Child'
+      import Child from './Child.svelte'
       ::0 setContext('name', 'foo')
       ::1 setContext('name', 'bar')
     </script>
@@ -35,7 +35,7 @@ describe('context', () => {
 
     <script>
       import { setContext } from 'svelte'
-      import Child from './Child'
+      import Child from './Child.svelte'
       setContext('name', 'foo')
     </script>
 
@@ -64,7 +64,7 @@ describe('context', () => {
 
     <script>
       import { setContext } from 'svelte'
-      import Child from './Child'
+      import Child from './Child.svelte'
       ::0 setContext('name', 'foo')
       ::1 setContext('name', 'bar')
     </script>

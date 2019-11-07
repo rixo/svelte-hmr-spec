@@ -5,7 +5,7 @@ describe('slots', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     ::0 <Child />
@@ -29,7 +29,7 @@ describe('slots', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child>I am Slot</Child>
@@ -53,7 +53,7 @@ describe('slots', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     ::0 <Child />
@@ -93,7 +93,7 @@ describe('slots', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child>
@@ -139,5 +139,36 @@ describe('slots', () => {
       <h1>
         <span slot="dd">Ola</span>
       </h1>
+  `
+
+  testHmr`
+    # updates new slots
+
+    --- App.svelte ---
+
+    <script>
+      import Child from './Child.svelte'
+    </script>
+
+    <Child>
+      <div slot="a">alpha</div>
+      <div slot="b">beta</div>
+    </Child>
+
+    --- Child.svelte ---
+
+    ::0 <slot name="a">a</slot>
+    ::1 <slot name="b">b</slot>
+    ::2::
+      <slot name="a">alpha</slot>
+      <slot name="b">beta</slot>
+
+    * * * * *
+
+    ::0 <div slot="a">alpha</div>
+    ::1 <div slot="b">beta</div>
+    ::2::
+      <div slot="a">alpha</div>
+      <div slot="b">beta</div>
   `
 })

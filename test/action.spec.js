@@ -7,6 +7,7 @@ describe('action', () => {
     --- App.svelte ---
 
     <script>
+      import { onMount } from 'svelte'
       ::0 const action = node => node.innerText = 'touched'
       ::1 const action = node => node.innerText = 'touch touch'
     </script>

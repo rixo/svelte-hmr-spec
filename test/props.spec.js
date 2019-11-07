@@ -7,7 +7,7 @@ describe('props', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child name="foo" />
@@ -38,7 +38,7 @@ describe('props', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child name="foo" />

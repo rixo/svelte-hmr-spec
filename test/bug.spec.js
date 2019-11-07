@@ -8,7 +8,7 @@ describe('bug: missing insertion point with if + outros', () => {
 
     <script>
       import {fade} from 'svelte/transition'
-      import Child from './Child'
+      import Child from './Child.svelte'
       let first = true
       const toggleFirst = () => {first = !first}
     </script>

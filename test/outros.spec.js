@@ -27,7 +27,7 @@ describe('outros', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child />
@@ -55,7 +55,7 @@ describe('outros', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child />
@@ -101,7 +101,7 @@ describe('outros', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child />

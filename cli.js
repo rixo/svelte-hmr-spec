@@ -364,9 +364,11 @@ const runWithNode = async () => {
   config.set({
     appPath: appPath,
     e2e: appPath ? true : 'skip',
+    // keepRunning: keep server running between full watch runs
     keepRunning: !!watch,
     detail,
     open,
+    // keepOpen: keep puppeteer open & server running after run
     keepOpen,
     break: breakAfter,
     console: options.console,

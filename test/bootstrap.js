@@ -11,13 +11,19 @@ if (appPath) {
       path.resolve(fs.realpathSync(__dirname), '..', 'node_modules', 'svelte'),
   ]
   const found = possibleLocations.some(getPath => {
-    const sveltePath = getPath()
-    if (fs.existsSync(sveltePath)) {
-      const { version } = require(path.join(sveltePath, 'package.json'))
-      process.env.SVELTE = sveltePath
-      // eslint-disable-next-line no-console
-      console.log(`[SVHS] Use Svelte v${version}: ${sveltePath}`)
-      return true
+    try {
+      const sveltePath = getPath()
+      if (fs.existsSync(sveltePath)) {
+        const { version } = require(path.join(sveltePath, 'package.json'))
+        process.env.SVELTE = sveltePath
+        // eslint-disable-next-line no-console
+        console.log(`[SVHS] Use Svelte v${version}: ${sveltePath}`)
+        return true
+      }
+    } catch (err) {
+      if (err.code !== 'ENOENT') {
+        throw err
+      }
     }
   })
   if (!found) {

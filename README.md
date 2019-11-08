@@ -11,8 +11,6 @@ git clone git@github.com:rixo/svelte-hmr-spec.git
 cd svelte-hmr-spec
 npm install
 npm install --global .
-cd app
-npm install
 ```
 
 ## Usage
@@ -23,16 +21,20 @@ See inline help for an up to date description of available cli options:
 svhs --help
 ```
 
-To run the tests on the default bundled app (which should be last versions of svelte-loader, svelte, everything...):
+To run the tests on one of the bundled apps (that are based on [svelte-template-hot](https://github.com/rixo/svelte-template-hot/tree/test-hmr) and [svelte-template-webpack-hot](https://github.com/rixo/demo-svelte3-hmr/tree/test-hmr)):
 
 ```bash
-svhs --default
+svhs rollup
+# or
+svhs nollup
+# or
+svhs webpack
 ```
 
 To run the tests on a custom target, use `svhs ./path-to-your-app` (defaults to cwd). Example:
 
 ```bash
-git clone https://github.com/rixo/demo-svelte-nollup
+git clone https://github.com/rixo/svelte-template-hot
 cd demo-svelte-nollup
 npm install
 

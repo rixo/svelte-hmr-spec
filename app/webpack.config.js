@@ -7,6 +7,9 @@ const mode = process.env.NODE_ENV || 'development'
 const prod = mode === 'production'
 const dev = !prod
 
+const noPreserveState = !!process.env.NO_PRESERVE_STATE
+const optimistic = !!process.env.OPTIMISTIC
+
 module.exports = {
   entry: {
     bundle: ['./src/main.js'],
@@ -33,9 +36,17 @@ module.exports = {
             emitCss: false,
             hotReload: true,
             hotOptions: {
-              // will display compile error in the client, avoiding page
-              // reload on error
-              optimistic: false,
+              // whether to preserve local state (i.e. any `let` variable) or
+              // only public props (i.e. `export let ...`)
+              noPreserveState,
+              // optimistic will try to recover from runtime errors happening
+              // during component init. This goes funky when your components are
+              // not pure enough.
+              optimistic,
+              // we need these messages to know when it's ok to run tests
+              // assertion (because HMR updates are async and Webpack's own
+              // "up to date" message runs synchronously)
+              runtimeVerbose: true,
             },
             dev,
           },

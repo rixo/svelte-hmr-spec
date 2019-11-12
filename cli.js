@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const path = require('path')
+const fs = require('fs')
 
 const Mocha = require('mocha')
 const glob = require('fast-glob')
@@ -11,8 +12,9 @@ const { config } = require('test-hmr')
 const runMethod = 'node'
 
 const defaultOptions = {
+  app: '',
+  apps: [],
   detail: 0,
-  defaultApp: false,
   selfTest: false,
   selfTestOnly: false,
   watch: false,
@@ -27,7 +29,7 @@ const defaultOptions = {
   break: false,
   // console: log browser's console output to terminal
   console: false,
-  logWebpack: false,
+  logs: false,
 }
 
 const makeAbsolute = (name, basePath) =>
@@ -48,6 +50,9 @@ const resolveAppPath = (arg, cwd, noDefault) => {
 const helpDescription = `
 If no <app> is provided, then the current directory will be used.
 
+<app> can be a path to a custom app, or one of the predefined app: rollup,
+nollup, or webpack.
+
 The --watch option will adapt to the current test target. When the target is an
 app, both the app and tests directories will be placed under watch. When the
 target is --self, then only the test utils directory will be watched.
@@ -57,6 +62,11 @@ run (but HMR tests still won't be run).
 
 Debug the tests:
   node --inspect-brk $(which svhs) [options] <app>
+
+Examples:
+  svhs rollup
+  svhs nollup --watch
+  svhs . --open --keep
 `
 
 const helpMessage = ({ full = true }) => `
@@ -66,9 +76,10 @@ Options:
   --watch       Wath app and tests dirs, and rerun tests on change
   --open        Open puppeteer's browser for debug (with some slowmo)
   --keep        Keep the serves running after test run (useful for inspection)
+  --break       Pause browser after test has run
   --console     Display browser's console messages in the terminal
-  --webpack     Display webpack's output in the terminal
-  --default     Use default app in the svelte-hmr-spec project
+  --nollup      Prefer Nollup over Rollup if target app is Rollup based
+  --logs        Display bundler's output in the terminal
   --min         Display one mocha test (it) result per testHmr test (default)
   --detail      Display one test (it) result per HMR update
   --steps       Display one test (it) result per HMR update sub step
@@ -79,7 +90,7 @@ Options:
   --help, -h    Display ${full ? 'this' : 'full'} help message
 ${full ? helpDescription : ''}`
 
-const parseArgs = (argv, defaultOptions) => {
+const parseArgs = (argv, defaultOptions, appPaths) => {
   const options = {
     watch: false,
     watchDirs: [],
@@ -92,14 +103,12 @@ const parseArgs = (argv, defaultOptions) => {
   let help = false
   let setKey = null
   let maybeSetKey = null
-  const positionals = argv.slice(2).filter(arg => {
+  let positionals = argv.slice(2).filter(arg => {
     if (setKey) {
       options[setKey] = arg
       setKey = maybeSetKey = null
     } else if (arg === '--help' || arg === '-h') {
       help = true
-    } else if (arg === '--default') {
-      options.defaultApp = true
     } else if (arg === '--watch') {
       options.watch = true
     } else if (arg === '--open') {
@@ -110,8 +119,11 @@ const parseArgs = (argv, defaultOptions) => {
       options.break = true
     } else if (arg === '--console') {
       options.console = true
-    } else if (arg === '--webpack') {
-      options.logWebpack = true
+    } else if (arg === '--nollup') {
+      // prefer nollup over rollup
+      options.nollup = true
+    } else if (arg === '--logs') {
+      options.logs = true
     } else if (arg === '--watch-dir' || arg === '-w') {
       options.watch = true
       maybeSetKey = 'watchDirs.push'
@@ -148,14 +160,32 @@ const parseArgs = (argv, defaultOptions) => {
   let error = false
 
   if (positionals.length > 0) {
+    const apps = []
+    positionals = positionals.filter(arg => {
+      const app = appPaths[arg]
+      if (app) {
+        if (typeof app === 'object') {
+          Object.assign(options, app.config)
+          apps.push(app.path)
+        } else {
+          apps.push(app)
+        }
+        return false
+      }
+      return true
+    })
+    if (apps.length > 0) {
+      options.apps = apps
+    }
+  }
+
+  if (positionals.length > 0) {
     options.app = positionals.shift()
-    if (options.defaultApp) {
-      error = 'Only one of --default or <app> is allowed'
+    if (options.apps.length > 0) {
+      error = 'Custom app and default apps cannot be used together'
     } else if (positionals.length > 0) {
       error = 'Only one <app> path can be provided'
     }
-  } else if (options.defaultApp) {
-    options.app = path.join(__dirname, 'app')
   }
 
   if (help || error) {
@@ -203,12 +233,29 @@ const runWithNode = async () => {
   let runAgain
   let runner
 
-  const options = parseArgs(process.argv, defaultOptions)
+  const resolveApp = name =>
+    path.dirname(require.resolve(`${name}/package.json`, require.main))
+
+  const rollupAppPath = resolveApp('svelte-template-hot')
+
+  const appPaths = {
+    rollup: rollupAppPath,
+    nollup: {
+      path: rollupAppPath,
+      config: {
+        nollup: true,
+      },
+    },
+    webpack: resolveApp('svelte-template-webpack-hot'),
+  }
+
+  const options = parseArgs(process.argv, defaultOptions, appPaths)
 
   const {
     watch,
     watchSelf,
     watchLoader,
+    apps,
     app: appArg,
     detail,
     selfTest,
@@ -217,12 +264,31 @@ const runWithNode = async () => {
     keepOpen,
     break: breakAfter,
     userDataDir,
-    logWebpack,
+    logs,
+    nollup,
   } = options
 
-  // don't use default appPath with self only: if app path is provided, e2e
-  // self tests will be run, else marked as pending
-  const appPath = await resolveAppPath(appArg, process.cwd(), selfTestOnly)
+  let useApp
+  if (apps.length > 0) {
+    if (apps.length === 1) {
+      useApp = apps[0]
+    } else {
+      // TODO
+      throw new Error('TODO')
+    }
+  } else {
+    // don't use default appPath with self only: if app path is provided, e2e
+    // self tests will be run, else marked as pending
+    useApp = await resolveAppPath(appArg, process.cwd(), selfTestOnly)
+  }
+
+  const appPath = useApp
+
+  if (!fs.existsSync(appPath)) {
+    // eslint-disable-next-line no-console
+    console.error('App not found: ' + appPath)
+    process.exit(1)
+  }
 
   const run = async () => {
     if (mocha) {
@@ -372,8 +438,9 @@ const runWithNode = async () => {
     keepOpen,
     break: breakAfter,
     console: options.console,
-    logWebpack,
+    logs,
     userDataDir,
+    nollup,
   })
 
   return run()

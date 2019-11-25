@@ -1,4 +1,5 @@
 const { testHmr } = require('test-hmr')
+const { clickButton } = require('./helpers')
 
 describe('props', () => {
   testHmr`
@@ -58,5 +59,49 @@ describe('props', () => {
 
     ::0 I am foo "bar"
     ::1 I am foo
+  `
+
+  testHmr`
+    # restores value of aliased props (export {... as ...})
+
+    --- App.svelte ---
+
+    <script>
+      import Child from './Child.svelte'
+      let firstName = 'foo'
+      const click = () => {
+        firstName += firstName
+      }
+    </script>
+
+    <button on:click={click} />
+    <Child {firstName} />
+
+    --- Child.svelte ---
+
+    <script>
+      ::0::
+        let name
+        let surname = 'bar'
+        export { name as firstName, surname as lastName }
+      ::1::
+        let name
+        export { name as firstName }
+      ::::
+    </script>
+
+    <x-focus>
+      ::0 I am {name} "{surname}"
+      ::1 I am {name}
+    </x-focus>
+
+    * * * * *
+
+    ::0::
+       I am foo "bar"
+       ${clickButton()}
+       I am foofoo "bar"
+    ::1::
+       I am foofoo
   `
 })

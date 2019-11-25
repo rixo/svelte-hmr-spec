@@ -26,7 +26,9 @@
     "mocha": "^6.1.4",
     "mocha-unfunk-reporter": "^0.4.0",
     "node-fetch": "^2.6.0",
-    "test-hmr": "^0.0.3"
+    "svelte-template-hot": "rixo/svelte-template-hot#test-hmr",
+    "svelte-template-webpack-hot": "rixo/demo-svelte3-hmr#test-hmr",
+    "test-hmr": "^0.0.8"
   },
   "devDependencies": {
     "@rixo/eslint-config": "^0.7.0-alpha.7"

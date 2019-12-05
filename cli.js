@@ -111,9 +111,12 @@ const parseArgs = (argv, defaultOptions, appPaths) => {
       help = true
     } else if (arg === '--watch') {
       options.watch = true
-    } else if (arg === '--open') {
+    } else if (arg === '-ok' || arg === '-ko') {
       options.open = true
-    } else if (arg === '--keep') {
+      options.keepOpen = true
+    } else if (arg === '--open' || arg === '-o') {
+      options.open = true
+    } else if (arg === '--keep' || arg === '-k') {
       options.keepOpen = true
     } else if (arg === '--break') {
       options.break = true

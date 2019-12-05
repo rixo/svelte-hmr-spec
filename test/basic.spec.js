@@ -2,10 +2,7 @@ const { init, templates, change, innerText } = require('test-hmr')
 
 describe('basic', () => {
   testHmr('updates text content (twice)', function*() {
-    // NOTE this fails when demo app is not "Hello world"
-    // expect(yield innerText('h1')).to.equal('Hello world!')
-
-    yield change({
+    yield init({
       'App.svelte': '<h1>HMRd</h1>',
     })
     expect(yield innerText('h1'), 'update 1').to.equal('HMRd')

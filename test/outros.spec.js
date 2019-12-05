@@ -63,6 +63,7 @@ describe('outros', () => {
     --- Child.svelte ---
 
     <script>
+      '@!hmr'
       import { fade } from 'svelte/transition'
 
       let visible = true
@@ -109,6 +110,7 @@ describe('outros', () => {
     --- Child.svelte ---
 
     <script>
+      '@!hmr'
       import { fade } from 'svelte/transition'
 
       let visible = true

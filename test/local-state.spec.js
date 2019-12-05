@@ -2,7 +2,7 @@ const { clickButton } = require('./helpers')
 
 describe('local state', () => {
   testHmr`
-    # preserves local variables state when component changes
+    # preserves local state when component changes
 
     --- App.svelte ---
 
@@ -27,4 +27,176 @@ describe('local state', () => {
     ::1::
       after: 1
   `
+
+  testHmr`
+    # preserves local variables in simpler component (no definition)
+
+    --- App.svelte ---
+
+    <script>
+      ::0::
+        let a = 'foo'
+      ::1::
+        let a = 'bar'
+      :::::
+    </script>
+
+    {a}
+
+    * * * * *
+
+    ::0 foo
+    ::1 foo
+  `
+
+  testHmr`
+    # preserves value of props that become local
+
+    --- App.svelte ---
+
+    <script>
+      ::0 export let a = 'foo'
+      ::1 let a = 'bar'
+    </script>
+
+    {a}
+
+    * * * * *
+
+    ::0 foo
+    ::1 foo
+  `
+
+  testHmr`
+    # preserves value of locals that become props
+
+    --- App.svelte ---
+
+    <script>
+      ::0 let a = 'foo'
+      ::1 export let a = 'bar'
+    </script>
+
+    {a}
+
+    * * * * *
+
+    ::0 foo
+    ::1 foo
+  `
+
+  testHmr`
+    # preserves value of const that become local
+
+    --- App.svelte ---
+
+    <script>
+      ::0 const a = 'foo'
+      ::1 let a = 'bar'
+    </script>
+
+    {a}
+
+    * * * * *
+
+    ::0 foo
+    ::1 foo
+  `
+
+  testHmr`
+    # don't preserve value of exports that become const
+
+    --- App.svelte ---
+
+    <script>
+      ::0 export let a = 'foo'
+      ::1 const a = 'bar'
+    </script>
+
+    {a}
+
+    * * * * *
+
+    ::0 foo
+    ::1 bar
+  `
+
+  describe('@!hmr', () => {
+    testHmr`
+      # sanity check: preserves local state
+
+      --- App.svelte ---
+
+      <script>
+        ::0 let a = 0; a = 1;
+        ::1 let a = 0;
+      </script>
+
+      {a}
+
+      * * * * *
+
+      ::0 1
+      ::1 1
+    `
+
+    testHmr`
+      # force noPreserveState from markup
+
+      --- App.svelte ---
+
+      @!hmr
+
+      <script>
+        ::0 let a = 0; a = 1;
+        ::1 let a = 0;
+      </script>
+
+      {a}
+
+      * * * * *
+
+      ::0 1
+      ::1 0
+    `
+
+    testHmr`
+      # force noPreserveState from script
+
+      --- App.svelte ---
+
+      <script>
+        '@!hmr'
+        ::0 let a = 0; a = 1;
+        ::1 let a = 0;
+      </script>
+
+      {a}
+
+      * * * * *
+
+      ::0 1
+      ::1 0
+    `
+
+    testHmr`
+      # only applies to the update that contains the flag
+
+      --- App.svelte ---
+
+      <script>
+        ::0 let a = 0; a = 1;
+        ::1 '@!hmr'; let a = 2;
+        ::2 let a = 4;
+      </script>
+
+      {a}
+
+      * * * * *
+
+      ::0 1
+      ::1 2
+      ::2 2
+    `
+  })
 })

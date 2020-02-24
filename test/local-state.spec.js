@@ -199,4 +199,62 @@ describe('local state', () => {
       ::2 2
     `
   })
+
+  testHmr`
+    # does not crash when props are added to a component
+
+    --- App.svelte ---
+
+    <script>
+      import Child from './Child.svelte'
+    </script>
+
+    <Child />
+
+    --- Child.svelte ---
+
+    ::0::
+    ::1::
+    <script>
+      export let x = 'x'
+    </script>
+    ::::
+
+    ::0 I am Child
+    ::1 I am Child.{x}
+
+    * * * * *
+
+    ::0 I am Child
+    ::1 I am Child.x
+  `
+
+  testHmr`
+    # does not crash when props are removed from a component
+
+    --- App.svelte ---
+
+    <script>
+      import Child from './Child.svelte'
+    </script>
+
+    <Child />
+
+    --- Child.svelte ---
+
+    ::0::
+    <script>
+      export let x = 'x'
+    </script>
+    ::1::
+    ::::
+
+    ::0 I am Child.{x}
+    ::1 I am Child
+
+    * * * * *
+
+    ::0 I am Child.x
+    ::1 I am Child
+  `
 })

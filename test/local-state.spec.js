@@ -145,7 +145,7 @@ describe('local state', () => {
 
       --- App.svelte ---
 
-      <!-- @!hmr -->
+      ::1 <!-- @!hmr -->
 
       <script>
         ::0 let a = 0; a = 1;
@@ -166,9 +166,8 @@ describe('local state', () => {
       --- App.svelte ---
 
       <script>
-        // @!hmr
         ::0 let a = 0; a = 1;
-        ::1 let a = 0;
+        ::1 let a = 0; // @!hmr
       </script>
 
       {a}

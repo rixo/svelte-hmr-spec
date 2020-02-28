@@ -1,4 +1,5 @@
-describe('context="module"', () => {
+// TODO need a way to test rollup options
+describe.skip('context="module"', () => {
   testHmr`
     # reloads components with <svelte:options accessors />
 

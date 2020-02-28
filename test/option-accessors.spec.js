@@ -1,4 +1,5 @@
-describe('accessors: true', () => {
+// TODO need a way to test rollup options
+describe.skip('accessors: true', () => {
   testHmr`
     # reloads components with <svelte:options accessors />
 

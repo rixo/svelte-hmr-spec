@@ -22,6 +22,8 @@ describe('$$set', () => {
 
     --- Child.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       export let x = 0
 

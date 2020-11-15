@@ -17,6 +17,8 @@ describe('bindings', () => {
 
     --- Child.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       export let value = 0
       const onClick = () => value = value + 1

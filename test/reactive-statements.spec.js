@@ -4,6 +4,8 @@ describe('reactive statements', () => {
 
     --- App.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       ::0::
         let a = 'foo'
@@ -51,6 +53,8 @@ describe('reactive statements', () => {
 
     --- App.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       ::0::
         let a = 'foo'
@@ -76,6 +80,8 @@ describe('reactive statements', () => {
 
     --- App.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       ::0::
         let a = 'foo'
@@ -99,6 +105,8 @@ describe('reactive statements', () => {
     # side effects in reactive blocks with multiple variables
 
     --- App.svelte ---
+
+    <!-- @hmr:keep-all -->
 
     <script>
       ::0::
@@ -134,6 +142,8 @@ describe('reactive statements', () => {
     # recomputes reactive blocks that depend on preserved state
 
     --- App.svelte ---
+
+    <!-- @hmr:keep-all -->
 
     <script>
       ::0::

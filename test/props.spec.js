@@ -79,6 +79,8 @@ describe('props', () => {
 
     --- Child.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       ::0::
         let name

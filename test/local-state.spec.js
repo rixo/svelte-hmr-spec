@@ -6,6 +6,8 @@ describe('local state', () => {
 
     --- App.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       let x = 0
       const increment = () => { x++ }
@@ -33,6 +35,8 @@ describe('local state', () => {
 
     --- App.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       ::0::
         let a = 'foo'
@@ -54,6 +58,8 @@ describe('local state', () => {
 
     --- App.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       ::0 export let a = 'foo'
       ::1 let a = 'bar'
@@ -71,6 +77,8 @@ describe('local state', () => {
     # preserves value of locals that become props
 
     --- App.svelte ---
+
+    <!-- @hmr:keep-all -->
 
     <script>
       ::0 let a = 'foo'
@@ -90,6 +98,8 @@ describe('local state', () => {
 
     --- App.svelte ---
 
+    <!-- @hmr:keep-all -->
+
     <script>
       ::0 const a = 'foo'
       ::1 let a = 'bar'
@@ -107,6 +117,8 @@ describe('local state', () => {
     # don't preserve value of exports that become const
 
     --- App.svelte ---
+
+    <!-- @hmr:keep-all -->
 
     <script>
       ::0 export let a = 'foo'
@@ -126,6 +138,8 @@ describe('local state', () => {
       # sanity check: preserves local state
 
       --- App.svelte ---
+
+      <!-- @hmr:keep-all -->
 
       <script>
         ::0 let a = 0; a = 1;
@@ -182,6 +196,8 @@ describe('local state', () => {
       # only applies to the update that contains the flag
 
       --- App.svelte ---
+
+      <!-- @hmr:keep-all -->
 
       <script>
         ::0 let a = 0; a = 1;

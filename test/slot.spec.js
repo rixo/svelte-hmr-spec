@@ -26,6 +26,12 @@ describe('slots', () => {
   testHmr`
     # updates default slot when child changes
 
+    ${function*() {
+      yield this.cons.ignoreWarnings(
+        '<Child> received an unexpected slot "default".'
+      )
+    }}
+
     --- App.svelte ---
 
     <script>
@@ -143,6 +149,14 @@ describe('slots', () => {
 
   testHmr`
     # updates new slots
+
+    ${function*() {
+      yield this.cons.ignoreWarnings(
+        '<Child> received an unexpected slot "default".',
+        '<Child> received an unexpected slot "a".',
+        '<Child> received an unexpected slot "b".'
+      )
+    }}
 
     --- App.svelte ---
 

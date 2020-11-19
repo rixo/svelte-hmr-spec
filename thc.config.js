@@ -51,6 +51,7 @@ export default {
   bootstrap,
   files: 'test/**/*.spec.js',
   fixturesDir: path.resolve(__dirname, 'src.fixtures'),
+  nollup: true, // NOTE only one working at time of change...
   apps: {
     rollup: rollupAppPath,
     nollup: {

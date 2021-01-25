@@ -9,10 +9,22 @@ describe('props', () => {
 
     <script>
       import Child from './Child.svelte'
+
+      let name = 'foo'
+
+      // NOTE ensure _changed_ (i.e. current) props are preserved too, not just
+      // initial props -- bug detected on 2021-01-25
+      const changeName = () => {
+        name = 'foofoo'
+      }
     </script>
 
-    <Child name="foo" />
-    <Child name="bar" />
+    <x-focus>
+      <Child {name} />
+      <Child name="bar" />
+    </x-focus>
+
+    <button on:click={changeName} />
 
     --- Child.svelte ---
 
@@ -28,8 +40,59 @@ describe('props', () => {
     ::0::
       I am foo
       I am bar
+      ${clickButton()}
+      I am foofoo
+      I am bar
     ::1::
-      My name is foo
+      My name is foofoo
+      My name is bar
+  `
+
+  testHmr`
+    # preserves props value with preserveLocalState
+
+    --- App.svelte ---
+
+    <script>
+      // @hmr:keep-all
+      import Child from './Child.svelte'
+
+      let name = 'foo'
+
+      // NOTE ensure _changed_ (i.e. current) props are preserved too, not just
+      // initial props -- bug detected on 2021-01-25
+      const changeName = () => {
+        name = 'foofoo'
+      }
+    </script>
+
+    <x-focus>
+      <Child {name} />
+      <Child name="bar" />
+    </x-focus>
+
+    <button on:click={changeName} />
+
+    --- Child.svelte ---
+
+    <script>
+      // @hmr:keep-all
+      export let name = 'Child'
+    </script>
+
+    ::0 I am {name}
+    ::1 My name is {name}
+
+    * * *
+
+    ::0::
+      I am foo
+      I am bar
+      ${clickButton()}
+      I am foofoo
+      I am bar
+    ::1::
+      My name is foofoo
       My name is bar
   `
 

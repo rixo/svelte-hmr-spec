@@ -26,8 +26,6 @@
     "mocha": "^6.1.4",
     "mocha-unfunk-reporter": "^0.4.0",
     "node-fetch": "^2.6.0",
-    "svelte-template-hot": "rixo/svelte-template-hot#test-hmr",
-    "svelte-template-webpack-hot": "rixo/demo-svelte3-hmr#test-hmr",
     "test-hmr": "^0.1"
   },
   "devDependencies": {

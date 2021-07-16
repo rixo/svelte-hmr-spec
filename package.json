@@ -28,7 +28,7 @@
     "node-fetch": "^2.6.0",
     "svelte-template-hot": "rixo/svelte-template-hot#test-hmr",
     "svelte-template-webpack-hot": "rixo/demo-svelte3-hmr#test-hmr",
-    "test-hmr": "^0.0.8"
+    "test-hmr": "^0.1"
   },
   "devDependencies": {
     "@rixo/eslint-config": "^0.7.0-alpha.7"

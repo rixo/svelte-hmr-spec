@@ -1,6 +1,6 @@
 describe('simultaneous update parent & child', () => {
   testHmr`
-    # doesn't try to recreate destroyed child component
+    # renders last version of everything
 
     --- a.js ---
 
@@ -10,7 +10,7 @@ describe('simultaneous update parent & child', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
       import wrap from './a'
     </script>
 

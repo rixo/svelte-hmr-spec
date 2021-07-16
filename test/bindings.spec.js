@@ -7,7 +7,7 @@ describe('bindings', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
       let value
     </script>
 
@@ -16,6 +16,8 @@ describe('bindings', () => {
     {value}
 
     --- Child.svelte ---
+
+    <!-- @hmr:keep-all -->
 
     <script>
       export let value = 0

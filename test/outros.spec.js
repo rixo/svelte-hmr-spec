@@ -27,7 +27,7 @@ describe('outros', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child />
@@ -55,7 +55,7 @@ describe('outros', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child />
@@ -63,6 +63,7 @@ describe('outros', () => {
     --- Child.svelte ---
 
     <script>
+      '@!hmr'
       import { fade } from 'svelte/transition'
 
       let visible = true
@@ -101,7 +102,7 @@ describe('outros', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <Child />
@@ -109,6 +110,7 @@ describe('outros', () => {
     --- Child.svelte ---
 
     <script>
+      '@!hmr'
       import { fade } from 'svelte/transition'
 
       let visible = true

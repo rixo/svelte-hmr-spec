@@ -60,10 +60,6 @@ describe('style', () => {
 
     --- Child.svelte ---
 
-    <script>
-      export let red = false
-    </script>
-
     <style>
       h1 {
         ::0::

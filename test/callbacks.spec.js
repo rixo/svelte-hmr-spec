@@ -7,7 +7,7 @@ describe('callbacks', () => {
     ----- App.svelte -----
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
 
       let value = 0
 

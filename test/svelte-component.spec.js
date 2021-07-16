@@ -7,7 +7,7 @@ describe('<svelte:component />', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
     </script>
 
     <svelte:component this={Child} name="kid" />
@@ -37,7 +37,7 @@ describe('<svelte:component />', () => {
     --- App.svelte ---
 
     <script>
-      import Child from './Child'
+      import Child from './Child.svelte'
       let alt = false
       const toggleAlt = () => {
         alt = !alt

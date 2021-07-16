@@ -43,21 +43,21 @@ const bootstrap = ({ appPath }) => {
   }
 }
 
-const resolveApp = name => path.dirname(require.resolve(`${name}/package.json`))
-
-const rollupAppPath = resolveApp('svelte-template-hot')
+// const resolveApp = name => path.dirname(require.resolve(`${name}/package.json`))
+//
+// const rollupAppPath = resolveApp('svelte-template-hot')
 
 export default {
   bootstrap,
   files: 'test/**/*.spec.js',
   fixturesDir: path.resolve(__dirname, 'src.fixtures'),
   nollup: true, // NOTE only one working at time of change...
-  apps: {
-    rollup: rollupAppPath,
-    nollup: {
-      path: rollupAppPath,
-      nollup: true,
-    },
-    webpack: resolveApp('svelte-template-webpack-hot'),
-  },
+  // apps: {
+  //   rollup: rollupAppPath,
+  //   nollup: {
+  //     path: rollupAppPath,
+  //     nollup: true,
+  //   },
+  //   webpack: resolveApp('svelte-template-webpack-hot'),
+  // },
 }
